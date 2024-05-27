@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "91a00d82-7048-44bc-b001-b9c00028c198",
+		"name": "SSI-DY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "9292505"
+	},
+	"item": [
+		{
+			"name": "issuer-holder-connection",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "holderAgentUrl",
+							"value": "localhost:11003",
+							"type": "text"
+						},
+						{
+							"key": "issuerAgentUrl",
+							"value": "localhost:11000",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:3000/issuer-holder-connection"
+			},
+			"response": []
+		},
+		{
+			"name": "verfier-holder-connection",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "holderAgentUrl",
+							"value": "localhost:11003",
+							"type": "text"
+						},
+						{
+							"key": "verifierAgentUrl",
+							"value": "localhost:11001",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:3000/agent-connection"
+			},
+			"response": []
+		},
+		{
+			"name": "credential-definition-Schema",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "IssuerAgentUrl",
+							"value": "localhost:11000",
+							"type": "text"
+						},
+						{
+							"key": "attributes",
+							"value": "[\"id\",\"name\",\"dob\",\"aadhar\"]",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "schema_name",
+							"value": "general_schema3",
+							"type": "text"
+						},
+						{
+							"key": "schema_version",
+							"value": "1.0",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:3000/credential-definition-Schema"
+			},
+			"response": []
+		},
+		{
+			"name": "Issue",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "123kpmgs",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "kpmgs",
+							"type": "text"
+						},
+						{
+							"key": "dob",
+							"value": "23/10/1197",
+							"type": "text"
+						},
+						{
+							"key": "aadhar",
+							"value": "\"1222212\"",
+							"type": "text"
+						},
+						{
+							"key": "issuer_connection_id",
+							"value": "4811bf57-7317-4946-a327-efd94553fcc3",
+							"type": "text"
+						},
+						{
+							"key": "cred_def_id",
+							"value": "Utwqp5cpEATQpGZL5WSQZJ:3:CL:20:default",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:3000/issue-credential"
+			},
+			"response": []
+		},
+		{
+			"name": "verify",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:3000/verify-credential?credential=123kpmgs&verifier_connection_id=0820029e-1042-464a-815a-4ffda16c4c3b&cred_def_id=Utwqp5cpEATQpGZL5WSQZJ:3:CL:20:default",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"verify-credential"
+					],
+					"query": [
+						{
+							"key": "credential",
+							"value": "123kpmgs"
+						},
+						{
+							"key": "verifier_connection_id",
+							"value": "0820029e-1042-464a-815a-4ffda16c4c3b"
+						},
+						{
+							"key": "cred_def_id",
+							"value": "Utwqp5cpEATQpGZL5WSQZJ:3:CL:20:default"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -5,7 +5,7 @@ var app = express();
 const config = require("./config");
 let connectionOBj = new Object();
 const fs = require("fs");
-
+const bodyParser = require('body-parser');
 app.listen(3000, async () => {
  
     console.log("Listening on port 3000...");
@@ -13,8 +13,11 @@ app.listen(3000, async () => {
 });
 
 
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use(express.urlencoded({ extended: true }));
+// parse requests of content-type - application/json
+app.use(bodyParser.json())
+
 app.get("/configure", async (req, res) => {
   try {
     let response = {};
@@ -40,13 +43,12 @@ app.get("/configure", async (req, res) => {
 
 
 
-app.get("/issue-credential", async (req, res) => {
+app.post("/issue-credential", async (req, res) => {
   try {
     let response = {};
-    console.log(
-      connectionOBj.issuer_connection_id,
-      connectionOBj.issuer_connection_id
-    );
+    var issuer_connection_id = req.body.issuer_connection_id;
+    var cred_def_id = req.body.cred_def_id
+  
        var  attributes= [
         {
           name: "id",
@@ -69,10 +71,10 @@ app.get("/issue-credential", async (req, res) => {
 
         }
       ]
-
+console.log(attributes)
     let credential = await issueCredentials(
-      connectionOBj.issuer_connection_id,
-      connectionOBj.cred_def_id,
+      issuer_connection_id,
+      cred_def_id,
       attributes
     );
     res.status(200).json({
@@ -88,13 +90,20 @@ app.get("/issue-credential", async (req, res) => {
 
 app.get("/verify-credential", async (req, res) => {
   try {
+    console.log("3333")
+    var verifier_connection_id = req.query.verifier_connection_id;
+    var cred_def_id = req.query.cred_def_id;
     let cred_id = await getCredentialByID(req.query.credential);
+    console.log(cred_id)
+    
+console.log(cred_def_id,"22222")
     let connection = await verifyCredentials(
-      connectionOBj.verifier_connection_id,
-      connectionOBj.cred_def_id,
-      connectionOBj.verifier_connection_id,
+      cred_def_id,
+      verifier_connection_id,
       cred_id
     );
+
+    
     res.status(200).json({
       message: "crdential verification success",
       isVerfied: connection.verified,
@@ -106,7 +115,128 @@ app.get("/verify-credential", async (req, res) => {
   }
 });
 
+app.post('/issuer-holder-connection',async (req,res)=>{
 
+  var holderAgentUrl  = req.body.holderAgentUrl;
+  var issuerAgentUrl  = req.body.issuerAgentUrl;
+
+     var a = "http://"+ holderAgentUrl+ "/connections/receive-invitation";
+     var b = "http://"+issuerAgentUrl+"/connections/create-invitation"
+     
+    try {
+      var createConnectionResponse = await axios.post(
+        b,
+        {}
+      );
+      var issuer_connection_id = createConnectionResponse.data.connection_id;
+   
+      var receiveInvitationRespone = await axios.post(
+        a,
+        {
+          "@id": createConnectionResponse.data.invitation["@id"],
+          label: createConnectionResponse.data.invitation.label,
+          serviceEndpoint:
+            createConnectionResponse.data.invitation.serviceEndpoint,
+          recipientKeys: createConnectionResponse.data.invitation.recipientKeys,
+        }
+      );
+   
+    var holder_connection_id = receiveInvitationRespone.data.connection_id
+      //=====
+      var result = {
+        issuer_connection_id: issuer_connection_id,
+        holder_connection_id: holder_connection_id
+      }
+
+      res.json(result)
+    } catch (e) {
+      console.log(e);
+      res.send("error",e);
+    }
+  
+
+})
+
+app.post('/verfier-holder-connection',async (req,res)=>{
+
+  var holderAgentUrl  = req.body.holderAgentUrl;
+  var verifierAgentUrl  = req.body.verifierAgentUrl;
+
+     var a = "http://"+ holderAgentUrl+ "/connections/receive-invitation";
+     var b = "http://"+verifierAgentUrl+"/connections/create-invitation"
+     
+    try {
+      var createConnectionResponse = await axios.post(
+        b,
+        {}
+      );
+      var verifier_connection_id = createConnectionResponse.data.connection_id;
+   
+      var receiveInvitationRespone = await axios.post(
+        a,
+        {
+          "@id": createConnectionResponse.data.invitation["@id"],
+          label: createConnectionResponse.data.invitation.label,
+          serviceEndpoint:
+            createConnectionResponse.data.invitation.serviceEndpoint,
+          recipientKeys: createConnectionResponse.data.invitation.recipientKeys,
+        }
+      );
+   
+    var holder_connection_id = receiveInvitationRespone.data.connection_id
+      //=====
+      var result = {
+        verifier_connection_id: verifier_connection_id,
+        holder_connection_id: holder_connection_id
+      }
+
+      res.json(result)
+    } catch (e) {
+      console.log(e);
+      res.send("error",e);
+    }
+  
+
+})
+
+app.post('/credential-definition-Schema',async(req,res)=>{
+  try {
+    
+    var a = "http://"+ req.body.IssuerAgentUrl+ "/schemas";
+    var b = "http://"+ req.body.IssuerAgentUrl+ "/credential-definitions";
+    console.log(req.body.attributes)
+var error;
+    try {
+      
+   
+    var createSchema = await axios.post(
+      a,
+      {
+        attributes: ["id","name","dob","aadhar"],
+        schema_name: req.body.schema_name,
+        schema_version: req.body.schema_version,
+      }
+    );
+  } catch (err) {
+    error = err
+  }
+    var createCredentialDefiniton = await axios.post(
+      b,
+      {
+        schema_id: createSchema.data.schema_id,
+        support_revocation: false,
+        tag: "default",
+      }
+    );
+    // connectionOBj["cred_def_id"] =
+    //   createCredentialDefiniton.data.credential_definition_id;
+    res.json({cred_def_id: createCredentialDefiniton.data.credential_definition_id})
+  } catch (e) {
+    console.log("error", error);
+    res.send(error.response.data)
+  }
+
+})
 
 async function createConnection() {
   try {
@@ -160,6 +290,7 @@ async function createConnection() {
   }
 }
 
+
 async function createCredentialDefinitionSchema() {
   try {
     let schema_name = "generalschema-" + randomstring.generate(3);
@@ -194,7 +325,7 @@ async function issueCredentials(connection_id, cred_def_id, attributes) {
     connection_id: connection_id,
     cred_def_id: cred_def_id,
     credential_proposal: {
-      "@type": "issue-credential/1.0/credential-preview",
+      "@type": "issue-credential/1.0/offer-credential",
       
       // attributes: [
       //   {
@@ -230,7 +361,7 @@ async function issueCredentials(connection_id, cred_def_id, attributes) {
       payload
     );
     console.log(JSON.stringify(issueCredentials.data));
-
+   console.log("222222222222",issueCredentials);
     return issueCredentials.data;
   } catch (e) {
     console.log(e);
@@ -238,7 +369,7 @@ async function issueCredentials(connection_id, cred_def_id, attributes) {
 }
 
 async function verifyCredentials(
-  verifier_connection_id,
+
   cred_def_id,
   verifier_connection_id,
   cred_id
@@ -340,8 +471,9 @@ async function getCredentialByID(id) {
       config.HOLDER_AGENT_API_URL + `/credentials`,
       request
     );
-
+    console.log(cred_id.data.results[0].referent)
     return cred_id.data.results[0].referent;
+   
   } catch (e) {
     throw new Error("Invalid Credentials");
   }
