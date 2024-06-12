@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: issuer
+  labels:
+    app: issuer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: issuer
+  template:
+    metadata:
+      labels:
+        app: issuer
+    spec:
+      containers:
+      - name: issuer
+        image: bcgovimages/aries-cloudagent:py3.9-indy-1.16.0_0.11.1
+
+        command: ["/bin/bash", "-c"]
+        args: [
+          "sleep 5; \
+          aca-py start \
+          --auto-provision \
+          --seed 'issuer00000000000000000000000123' \
+          --inbound-transport http '0.0.0.0' 8001 \
+          --endpoint 'http://issuer-service:8001' \
+          --outbound-transport http \
+          --genesis-url 'http://greenlight.bcovrin.vonx.io/genesis' \
+          --auto-accept-invites \
+          --auto-accept-requests \
+          --auto-ping-connection \
+          --auto-respond-messages \
+          --auto-respond-credential-proposal \
+          --auto-store-credential \
+          --auto-respond-credential-offer \
+          --auto-respond-credential-request \
+          --notify-revocation \
+          --monitor-revocation-notification \
+          --wallet-type 'askar' \
+          --wallet-name 'issuer_agent_wallet' \
+          --wallet-key 'key' \
+          --admin '0.0.0.0' 11000 \
+          --admin-insecure-mode \
+          --label 'issuer' \
+          --log-level 'info'"
+        ]
+
+        ports:
+        - containerPort: 8001
+        - containerPort: 11000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: issuer-service
+  labels:
+    app: issuer
+spec:
+  type: NodePort
+  selector:
+    app: issuer
+  ports:
+  - protocol: TCP
+    port: 8001
+    targetPort: 8001
+    name: http
+  - protocol: TCP
+    port: 11000
+    targetPort: 11000
+    name: https
