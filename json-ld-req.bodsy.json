@@ -1,0 +1,103 @@
+{
+    "auto_remove": true,
+    "comment": "string",
+    "connection_id": "dce8a441-0c69-44e5-88a3-fa4dcb3bb77b",
+    "cred_def_id": "LnXR1rPnncTPZvRdmJKhJQ:3:CL:15:default",
+    "credential_preview": {
+        "@type": "https://didcomm.org/issue-credential/1.0/credential-preview",
+        "attributes": [
+            {
+                "name": "firstname",
+                "value": "vineeth"
+            },
+            {
+                "name": "lastname",
+                "value": "Kashyap"
+            },
+            {
+                "name": "age",
+                "mime-type": "image/jpeg",
+                "value": "20"
+            }
+        ]
+    },
+    "filter": {
+        "indy": {
+            "cred_def_id": "LnXR1rPnncTPZvRdmJKhJQ:3:CL:15:default"
+            // "issuer_did": "WgWxqztrNooG92RXvxSTWv",
+            // "schema_id": "WgWxqztrNooG92RXvxSTWv:2:schema_name:1.0",
+            // "schema_issuer_did": "WgWxqztrNooG92RXvxSTWv",
+            // "schema_name": "preferences",
+            // "schema_version": "1.0"
+        },
+        "ld_proof": {
+            "credential": {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/citizenship/v1",
+                    "https://w3id.org/security/bbs/v1",
+                    {
+                        "firstname": "https://schema.org/givenName",
+                        "lastname": "https://schema.org/familyName",
+                        "age": "https://schema.org/age"
+                    }
+                ],
+                "credentialSubject": {
+                    "firstname": "vineeth",
+                    "lastname": "Kashyap",
+                    "age": "20"
+                    // "type": [
+                    //   "PermanentResident",
+                    //   "Person"
+                    // ]
+                },
+                "description": "Government of Example Permanent Resident Card.",
+                "identifier": "83627465",
+                "issuanceDate": "2019-12-03T12:19:52Z",
+                "issuer": "did:sov:LnXR1rPnncTPZvRdmJKhJQ",
+                "name": "Permanent Resident Card",
+                "type": [
+                    "VerifiableCredential",
+                    "PermanentResidentCard"
+                ]
+            },
+            "options": {
+                "proofType": "Ed25519Signature2018"
+            }
+        }
+        //   "vc_di": {
+        //     "cred_def_id": "WgWxqztrNooG92RXvxSTWv:3:CL:20:tag",
+        //     "issuer_did": "WgWxqztrNooG92RXvxSTWv",
+        //     "schema_id": "WgWxqztrNooG92RXvxSTWv:2:schema_name:1.0",
+        //     "schema_issuer_did": "WgWxqztrNooG92RXvxSTWv",
+        //     "schema_name": "preferences",
+        //     "schema_version": "1.0"
+        //   }
+    },
+    "credential_proposal": {
+        "@type": "issue-credential/1.0/credential-preview",
+        "attributes": [
+            {
+                // "mime-type": "image/jpeg",
+                "name": "firstname",
+                "value": "vineeth"
+            },
+            {
+                //        "mime-type": "image/jpeg",
+                "name": "lastname",
+                "value": "Kashyap"
+            },
+            {
+                "mime-type": "image/jpeg",
+                "name": "age",
+                "value": "20"
+            }
+        ]
+    }
+    //   "issuer_did": "JivTaMMpVN9dTgbEm8rQZz",
+    //   "schema_id": "Jx4BjDJ43YMWDSrJmC1hvu:2:demo1:1.0",
+    //   "schema_issuer_did": "JivTaMMpVN9dTgbEm8rQZz",
+    //   "schema_name": "demo1",
+    //   "schema_version": "1.0",
+    //   "trace": true
+}
