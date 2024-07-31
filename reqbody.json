@@ -1,0 +1,29 @@
+{
+    "credential": {
+        "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://w3id.org/citizenship/v1",
+            "https://w3id.org/security/bbs/v1",
+            {
+                "firstname": "https://schema.org/givenName",
+                "lastname": "https://schema.org/familyName",
+                "age": "https://schema.org/age"
+            }
+        ],
+   
+        "credentialSubject": {
+            "firstname": "bihar",
+            "lastname": "Kashyap",
+            "age": "20"
+         
+        },
+        "expirationDate": "2010-01-01T19:23:24Z",
+        "id": "http://example.edu/credentials/1872",
+        "issuanceDate": "2010-01-01T19:23:24Z",
+        "issuer": "did:key:z6MkrePipzqSx8YvGGsxJ8eYJqzoqBY9zSz4ZQYtZAav1ZG7",
+        "type": [
+            "VerifiableCredential"
+        ]
+    }
+  
+}
